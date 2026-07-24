@@ -3,16 +3,13 @@ name: "Continuous Integration"
 on:
   workflow_call:
 
-permissions:
-  actions: write
-  checks: write
-  contents: read
-  statuses: write
-
 jobs:
   matrix:
     name: Generate job matrix
     runs-on: ubuntu-latest
+    permissions:
+      checks: write # Creates checks
+      contents: read
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
@@ -24,6 +21,8 @@ jobs:
     name: QA Checks
     needs: [matrix]
     runs-on: ${{ matrix.operatingSystem }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
